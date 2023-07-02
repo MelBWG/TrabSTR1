@@ -12,6 +12,7 @@
 #include "esp_log.h"
 #include "driver/mcpwm.h"
 #include "server_motor.h"
+#include <sys/time.h>
 
 static const char *TAG = "SERVO";
 
@@ -23,6 +24,7 @@ static const char *TAG = "SERVO";
 
 extern uint8_t scram_active;
 extern QueueHandle_t FilaInterrupt;
+
 
 static inline uint32_t example_convert_servo_angle_to_duty_us(int angle)
 {
@@ -43,7 +45,9 @@ void servo_activate(void* pvParams)
     int angle = 0;
     uint8_t interrupt;
     ESP_ERROR_CHECK(mcpwm_set_duty_in_us(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, example_convert_servo_angle_to_duty_us(angle)));
+    
     while(1) {
+        
         if(xQueueReceive(FilaInterrupt, (void *) &interrupt, (100/portTICK_PERIOD_MS))) {
             for (; angle > -SERVO_MAX_DEGREE; angle-=10) {
                 ESP_LOGI(TAG, "Angle of rotation: %d", angle);
@@ -53,9 +57,9 @@ void servo_activate(void* pvParams)
             ESP_LOGI("SCRAM", "SCRAM ATIVADO. REINICIAR SISTEMA");
             break;
         }
-
+        
     }
-    
+      
     vTaskDelete(NULL);
     
 }

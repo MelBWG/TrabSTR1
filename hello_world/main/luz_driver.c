@@ -8,6 +8,7 @@
 #include "driver/adc.h"
 #include "esp_adc_cal.h"
 
+
 #define DIGITAL_PIN 19
 #define MAX_OUTPUT 1000
 #define SAFETY_MAX 2500
@@ -21,6 +22,7 @@ extern uint8_t scram_active;
 
 static const char *TAG = "Light sensor";
 static esp_adc_cal_characteristics_t adc1_chars;
+
 
 uint32_t traduz_para_lumens(uint32_t tensao) {
     return tensao;
@@ -40,9 +42,9 @@ void light_sensor(void* pvParams)
     gpio_pullup_en(DIGITAL_PIN);
     gpio_set_intr_type(DIGITAL_PIN, GPIO_INTR_NEGEDGE);
 
-    gpio_install_isr_service(0);
+    vTaskDelay(5/portTICK_PERIOD_MS);
     gpio_isr_handler_add(DIGITAL_PIN, gpio_isr_handle_func, (void *)DIGITAL_PIN);
-
+    
     while (1) 
     {
         voltage = esp_adc_cal_raw_to_voltage(adc1_get_raw(ADC1_CHANNEL_4), &adc1_chars);
@@ -53,6 +55,7 @@ void light_sensor(void* pvParams)
             ESP_LOGW("SCRAM:", "SCRAM BY LIGHT SENSOR");
         } */
         //ESP_LOGI(TAG, "ADC1_CHANNEL_4: %d mV", voltage);
+        
         vTaskDelay(20/portTICK_PERIOD_MS);
     }
 }

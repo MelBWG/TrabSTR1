@@ -6,7 +6,7 @@
 #include "esp_log.h"
 #include "sdkconfig.h"
 #include "unistd.h"
-#include <sys/time.h>
+
 
 #define SLAVE_ADDRESS_LCD 0x4E>>1
 #define SDA_PIN  21
@@ -23,15 +23,13 @@ extern float temp_value;
 extern float umid_value;
 extern float power_value;
 
-char buffer[17];
-
-
-
 esp_err_t err;
+char buffer[17];
 
 #define I2C_NUM I2C_NUM_0
 
 static const char *TAG = "LCD";
+
 
 static esp_err_t i2c_master_init(void)
 {
@@ -142,7 +140,6 @@ void lcd_send_string (char *str)
 
 void taskLCD(void* param)
 {
-
     ESP_ERROR_CHECK(i2c_master_init());
     ESP_LOGI(TAG, "I2C initialized successfully");
 
@@ -158,10 +155,8 @@ void taskLCD(void* param)
     char temp_buffer[3];
     char umid_buffer[3];
     char luz_buffer[4];
-    struct timeval tv_now;
+
     while (true) {
-        gettimeofday(&tv_now, NULL);
-        ESP_LOGI("temp","init: %lld", ((int64_t) tv_now.tv_sec * 1000000L + (int64_t)tv_now.tv_usec));
         if(flag_init) {
             if(xSemaphoreTake(SemaforoTemp, (TickType_t) 100)) {
                 sprintf(temp_buffer, "%2d", (int) temp_value);
@@ -194,8 +189,6 @@ void taskLCD(void* param)
             lcd_put_cur(1, 12);
             lcd_send_string("INIT");
         }
-        gettimeofday(&tv_now, NULL);
-        ESP_LOGI("temp","end: %lld", ((int64_t) tv_now.tv_sec * 1000000L + (int64_t)tv_now.tv_usec));
         vTaskDelay(500/portTICK_PERIOD_MS);
     }
 }

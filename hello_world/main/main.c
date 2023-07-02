@@ -7,6 +7,7 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -20,6 +21,7 @@
 #include "lcd_driver.h"
 #include "temp_driver.h"
 #include "luz_driver.h"
+
 
 #define BUTTON_PIN 5
 
@@ -48,6 +50,7 @@ void IRAM_ATTR gpio_isr_handle_func(void* args) {
 
 void app_main(void)
 {
+    
     TaskHandle_t teste, lcd;
     TaskHandle_t servoTask;
     SemaforoTemp = xSemaphoreCreateBinary();
@@ -56,7 +59,7 @@ void app_main(void)
     xSemaphoreGive(SemaforoUmid);
     SemaforoLumi = xSemaphoreCreateBinary();
     xSemaphoreGive(SemaforoLumi);
-
+    gpio_install_isr_service(0);
     FilaInterrupt = xQueueCreate(3, sizeof(uint8_t));
     xTaskCreate(taskLCD, "taskLCD", 1024*2, &lcd, 10, &lcd);
 
@@ -71,7 +74,6 @@ void app_main(void)
     gpio_set_intr_type(BUTTON_PIN, GPIO_INTR_POSEDGE);
     
     gpio_isr_handler_add(BUTTON_PIN, gpio_isr_handle_func, (void *)BUTTON_PIN);
-    
     xTaskCreate(servo_activate, "servo_activate", 1024*2, &servoTask, configMAX_PRIORITIES-3, &servoTask);
     flag_init = 1;
 }

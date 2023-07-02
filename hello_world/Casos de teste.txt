@@ -35,7 +35,15 @@ Botão {
 
 Protocolo de teste
 
-- Adicionar dois timestamps na task, desde o início, iniciar o scram se possível
-- Adicionar dois timestamps na task, desde o início, iniciar o scram se possível 
+- Adicionar dois timestamps na task, desde o início, pela task e medir o tempo de execução da task quando ela mesma ativa o scram
+
+- Adicionar dois timestamps na task, desde o início, medir o tempo de execução da task várias vezes e somar
+ao tempo de execução do scram quando acionado pelo botão.
+
+Utilizar essas duas técnicas para medir o WCRT.
+
+
+- medir primeiro a task servo-motor porque vai ser utilizado nas outras tasks.
+
 
 
