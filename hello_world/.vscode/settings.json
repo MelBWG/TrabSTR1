@@ -7,6 +7,11 @@
         "gpio.h": "c",
         "esp_adc_cal.h": "c",
         "esp_spi_flash.h": "c",
-        "queue.h": "c"
+        "queue.h": "c",
+        "esp_log.h": "c",
+        "temp_driver.h": "c",
+        "dht.h": "c",
+        "*.inc": "c",
+        "unistd.h": "c"
     }
 }

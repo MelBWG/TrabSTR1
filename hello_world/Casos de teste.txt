@@ -1,0 +1,41 @@
+Casos de teste
+
+Piores caminhos de execução
+
+LCD
+{
+Primeira vez que executa
+
+Dentro do while:
+- entra nos ifs de semaforo
+- entra no else do scram_active
+}
+
+
+servo {
+Inicia o servo
+-ativa scram
+}
+
+luz {
+inicia o sensor e gpio
+- le o sensor
+
+}
+
+temp {
+inicia o sensor
+- entra no if dos semaforos
+- entra na condicao de scram
+}
+
+Botão {
+ - É ativado
+}
+
+Protocolo de teste
+
+- Adicionar dois timestamps na task, desde o início, iniciar o scram se possível
+- Adicionar dois timestamps na task, desde o início, iniciar o scram se possível 
+
+

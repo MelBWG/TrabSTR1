@@ -8,9 +8,9 @@
 #include "driver/adc.h"
 #include "esp_adc_cal.h"
 
-#define DIGITAL_PIN 15
+#define DIGITAL_PIN 19
 #define MAX_OUTPUT 1000
-#define SAFETY_MAX 500
+#define SAFETY_MAX 2500
 #define MAX_VOLTAGE 2.2
 
 extern void IRAM_ATTR gpio_isr_handle_func(void* args);
@@ -36,9 +36,9 @@ void light_sensor(void* pvParams)
 
     gpio_pad_select_gpio(DIGITAL_PIN);
     gpio_set_direction(DIGITAL_PIN, GPIO_MODE_INPUT);
-    gpio_pulldown_en(DIGITAL_PIN);
-    gpio_pullup_dis(DIGITAL_PIN);
-    gpio_set_intr_type(DIGITAL_PIN, GPIO_INTR_POSEDGE);
+    gpio_pulldown_dis(DIGITAL_PIN);
+    gpio_pullup_en(DIGITAL_PIN);
+    gpio_set_intr_type(DIGITAL_PIN, GPIO_INTR_NEGEDGE);
 
     gpio_install_isr_service(0);
     gpio_isr_handler_add(DIGITAL_PIN, gpio_isr_handle_func, (void *)DIGITAL_PIN);
@@ -47,11 +47,12 @@ void light_sensor(void* pvParams)
     {
         voltage = esp_adc_cal_raw_to_voltage(adc1_get_raw(ADC1_CHANNEL_4), &adc1_chars);
         power_value = traduz_para_lumens(voltage);
-        if(power_value >= SAFETY_MAX) {
+        /* if(power_value >= SAFETY_MAX) {
             scram_active = 1;
             xQueueSend(FilaInterrupt, &scram_active, (20/portTICK_PERIOD_MS));
-        }
+            ESP_LOGW("SCRAM:", "SCRAM BY LIGHT SENSOR");
+        } */
         //ESP_LOGI(TAG, "ADC1_CHANNEL_4: %d mV", voltage);
-        vTaskDelay(50/portTICK_PERIOD_MS);
+        vTaskDelay(20/portTICK_PERIOD_MS);
     }
 }

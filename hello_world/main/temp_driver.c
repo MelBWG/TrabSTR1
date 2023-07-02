@@ -27,7 +27,7 @@ void DHT_task(void *pvParameter)
     {
         //ESP_LOGI(TAG, "=== Reading DHT ===\n");
         int ret = readDHT();
-        errorHandler(ret);
+        //ESP_LOGW("RESP TEMP:","Valor ret: %d",ret);
         if(xSemaphoreTake(SemaforoTemp, (TickType_t) 100) == pdTRUE) {
             temp_value = getTemperature();
             xSemaphoreGive(SemaforoTemp);
@@ -38,11 +38,12 @@ void DHT_task(void *pvParameter)
         }
         //ESP_LOGI(TAG, "Hum: %.1f Tmp: %.1f\n", umid_value, temp_value);
         if((temp_value>=50 || umid_value>=90) && (!scram_active)) {
+            ESP_LOGW("SCRAM:", "SCRAM BY TEMP SENSOR");
             scram_active = 1;
             xQueueSend(FilaInterrupt, &scram_active, (20/portTICK_PERIOD_MS));
         }
         // -- wait at least 2 sec before reading again ------------
         // The interval of whole process must be beyond 2 seconds !!
-        vTaskDelay(450 / portTICK_RATE_MS);
+        vTaskDelay(50 / portTICK_RATE_MS);
     }
 }
